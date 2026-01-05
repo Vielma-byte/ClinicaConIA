@@ -41,6 +41,12 @@ services:
           type: web
           name: radiodiagnostico-ia
           property: host
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
     # NOTA: Debes añadir las variables de Firebase (VITE_FIREBASE_...) aquí manualmente en el Dashboard
 
   # ---------------------------------------------------
