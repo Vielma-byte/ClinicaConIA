@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+tensorflow
+numpy
+pillow
+pydicom
+firebase-admin
+python-multipart
+requests

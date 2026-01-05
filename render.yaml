@@ -1,0 +1,65 @@
+services:
+  # ---------------------------------------------------
+  # 1. SERVICIO DE INTELIGENCIA ARTIFICIAL (Python)
+  # ---------------------------------------------------
+  - type: web
+    name: radiodiagnostico-ia
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: |
+      cd Backend/ia-service
+      pip install -r requirements.txt
+    startCommand: |
+      cd Backend/ia-service
+      uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+    # NOTA: Debes subir 'credentials.json' como Secret File en el Dashboard de Render
+    # Mount Path: /opt/render/project/src/Backend/ia-service/credentials.json
+
+  # ---------------------------------------------------
+  # 2. BACKEND API (Node.js)
+  # ---------------------------------------------------
+  - type: web
+    name: radiodiagnostico-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: |
+      cd Backend
+      npm install
+    startCommand: |
+      cd Backend
+      node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: IA_SERVICE_URL
+        fromService:
+          type: web
+          name: radiodiagnostico-ia
+          property: url
+          envVarKey: IA_SERVICE_URL # Esto inyecta la URL de la IA automáticamente
+    # NOTA: Debes añadir las variables de Firebase (VITE_FIREBASE_...) aquí manualmente en el Dashboard
+
+  # ---------------------------------------------------
+  # 3. FRONTEND (React Static Site)
+  # ---------------------------------------------------
+  - type: static
+    name: radiodiagnostico-frontend
+    env: static
+    region: oregon
+    buildCommand: |
+      cd Frontend
+      npm install
+      npm run build
+    staticPublishPath: Frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+            type: web
+            name: radiodiagnostico-backend
+            property: url
+    # NOTA: Añadir variables VITE_FIREBASE_* en el Dashboard
