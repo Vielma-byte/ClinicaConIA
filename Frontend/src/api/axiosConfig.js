@@ -2,8 +2,20 @@ import axios from 'axios';
 import { auth } from '../firebaseConfig';
 
 // Crear una instancia de axios con la URL base de tu API
+// Determinar la URL base. Si viene de Render (property: host), puede venir sin protocolo.
+const getBaseUrl = () => {
+    let url = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+    if (!url.startsWith('http')) {
+        url = `https://${url}`;
+    }
+    return url;
+};
+
 const apiClient = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api',
+    baseURL: getBaseUrl(),
+    headers: {
+        'Content-Type': 'application/json',
+    }
 });
 
 import toast from 'react-hot-toast';
