@@ -8,16 +8,16 @@ services:
     region: oregon
     plan: free
     buildCommand: |
-      cd Backend/ia-service
+      cd Backend/api-IAFraturas
       pip install -r requirements.txt
     startCommand: |
-      cd Backend/ia-service
+      cd Backend/api-IAFraturas
       uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
     # NOTA: Debes subir 'credentials.json' como Secret File en el Dashboard de Render
-    # Mount Path: /opt/render/project/src/Backend/ia-service/credentials.json
+    # Mount Path: /opt/render/project/src/Backend/api-IAFraturas/credentials.json
 
   # ---------------------------------------------------
   # 2. BACKEND API (Node.js)
