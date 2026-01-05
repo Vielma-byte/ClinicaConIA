@@ -16,6 +16,12 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.9.0
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
     # NOTA: Debes subir 'credentials.json' como Secret File en el Dashboard de Render
     # Mount Path: /opt/render/project/src/Backend/api-IAFraturas/credentials.json
 

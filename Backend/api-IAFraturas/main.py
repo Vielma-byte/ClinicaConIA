@@ -43,14 +43,36 @@ app.add_middleware(
 # 2. Conectar a Firebase
 if not firebase_admin._apps:
     try:
-        if os.path.exists(CREDENTIALS_FILE):
+        # Prioridad 1: Variables de Entorno (Producción / Render)
+        if os.environ.get('FIREBASE_PRIVATE_KEY'):
+            print("🔐 Usando credenciales de ENV VARS...")
+            cred_dict = {
+                "type": "service_account",
+                "project_id": os.environ.get('FIREBASE_PROJECT_ID'),
+                "private_key_id": "iso-8859-1", # Opcional
+                "private_key": os.environ.get('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
+                "client_email": os.environ.get('FIREBASE_CLIENT_EMAIL'),
+                "client_id": "ignored",
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_x509_cert_url": "ignored"
+            }
+            cred = credentials.Certificate(cred_dict)
+            firebase_admin.initialize_app(cred, {
+                'storageBucket': BUCKET_NAME
+            })
+            print(f"🔥 Firebase conectado (vía ENV) al bucket: {BUCKET_NAME}")
+            
+        # Prioridad 2: Archivo local json (Desarrollo)
+        elif os.path.exists(CREDENTIALS_FILE):
             cred = credentials.Certificate(CREDENTIALS_FILE)
             firebase_admin.initialize_app(cred, {
                 'storageBucket': BUCKET_NAME
             })
-            print(f"🔥 Firebase conectado al bucket: {BUCKET_NAME}")
+            print(f"🔥 Firebase conectado (vía JSON) al bucket: {BUCKET_NAME}")
         else:
-            print("⚠️ ADVERTENCIA: No se encontró 'credentials.json'. La función de Firebase fallará.")
+            print("⚠️ ADVERTENCIA: No se encontraron credenciales (ni ENV ni JSON). La IA no podrá descargar imágenes.")
     except Exception as e:
         print(f"❌ Error conectando Firebase: {e}")
 
@@ -118,7 +140,7 @@ def prepare_image(image_bytes, filename):
     img = img.resize(IMG_SIZE)
     
     # 5. Convertir a Array numérico (0 a 255)
-    img_array = tf.keras.preprocessing.image.img_to_array(img)
+    img_array = tf.keras.utils.img_to_array(img)
     img_array = tf.expand_dims(img_array, 0) # Crear batch de 1
     
     # ⚠️ NOTA CRÍTICA: NO aplicamos preprocess_input aquí porque 
