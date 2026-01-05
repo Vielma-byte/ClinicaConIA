@@ -47,7 +47,7 @@ services:
   # ---------------------------------------------------
   # 3. FRONTEND (React Static Site)
   # ---------------------------------------------------
-  - type: static
+  - type: web
     name: radiodiagnostico-frontend
     env: static
     region: oregon
