@@ -16,18 +16,22 @@ const port = process.env.PORT || 3001;
 app.use(helmet()); // Seguridad HTTP
 
 // Configuración de CORS dinámica
+// Configuración de CORS dinámica
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
+    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
     : ['http://localhost:5173', 'http://localhost:3001'];
+
+console.log('✅ CORS Allowed Origins:', allowedOrigins);
 
 app.use(cors({
     origin: (origin, callback) => {
         // Permitir peticiones sin origen (como apps móviles o curl)
         if (!origin) return callback(null, true);
 
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        if (allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
+            console.error(`❌ CORS BLOCKED: Origin '${origin}' is not in the allowed list.`);
             callback(new Error('Bloqueado por CORS policy'));
         }
     },
