@@ -29,7 +29,10 @@ const createCase = async (req, res) => {
                             console.log(`🤖 Solicitando análisis IA para: ${archivo.nombre}`);
 
                             // Llamada al microservicio de Python (URL configurable para producción)
-                            const iaServiceUrl = process.env.IA_SERVICE_URL || 'http://localhost:8000';
+                            let iaServiceUrl = process.env.IA_SERVICE_URL || 'http://localhost:8000';
+                            if (!iaServiceUrl.startsWith('http')) {
+                                iaServiceUrl = `https://${iaServiceUrl}`;
+                            }
                             const iaResponse = await axios.post(`${iaServiceUrl}/analyze_firebase`, {
                                 path: archivo.uploadPath
                             });

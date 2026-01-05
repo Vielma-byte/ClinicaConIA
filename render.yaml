@@ -40,7 +40,7 @@ services:
         fromService:
           type: web
           name: radiodiagnostico-ia
-          property: url
+          property: host
     # NOTA: Debes añadir las variables de Firebase (VITE_FIREBASE_...) aquí manualmente en el Dashboard
 
   # ---------------------------------------------------
