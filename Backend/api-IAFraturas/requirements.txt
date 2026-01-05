@@ -1,7 +1,8 @@
 fastapi
 uvicorn
-tensorflow
-numpy
+tensorflow==2.15.0
+protobuf==3.20.3
+numpy<2.0.0
 pillow
 pydicom
 firebase-admin
