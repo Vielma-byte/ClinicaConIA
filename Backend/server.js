@@ -70,4 +70,6 @@ app.use((err, req, res, next) => {
 // --- INICIAR SERVIDOR ---
 app.listen(port, () => {
     console.log(`[BACKEND] Servidor iniciado y escuchando en http://localhost:${port}`);
+    console.log(`[ENV] Entorno: ${process.env.NODE_ENV}`);
+    console.log(`[FIREBASE] Project ID: ${process.env.FIREBASE_PROJECT_ID || 'NO DETECTADO'}`);
 });
