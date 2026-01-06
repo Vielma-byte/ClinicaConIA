@@ -72,12 +72,22 @@ const getDoctors = async (req, res) => {
 const getUserById = async (req, res) => {
     try {
         const { uid } = req.params;
+        console.log(`🔍 [GET USER] Buscando usuario con UID: ${uid}`);
+
         const userDoc = await db.collection('users').doc(uid).get();
 
         if (!userDoc.exists) {
-            return res.status(404).json({ message: 'Datos de usuario no encontrados.' });
+            console.warn(`⚠️ [GET USER] Usuario NO encontrado en Firestore. UID buscado: ${uid}`);
+
+            // DEBUG: Listar qué usuarios SÍ existen para comparar
+            const allUsers = await db.collection('users').select().get();
+            const existingIds = allUsers.docs.map(doc => doc.id);
+            console.log(`📋 [DEBUG] IDs disponibles en 'users':`, existingIds);
+
+            return res.status(404).json({ message: 'Datos de usuario no encontrados.', debug_ids: existingIds });
         }
 
+        console.log(`✅ [GET USER] Usuario encontrado: ${userDoc.data().email} (${userDoc.data().rol})`);
         res.status(200).json({ id: userDoc.id, ...userDoc.data() });
     } catch (error) {
         console.error('Error al obtener datos de usuario:', error);

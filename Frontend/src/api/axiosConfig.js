@@ -5,9 +5,19 @@ import { auth } from '../firebaseConfig';
 // Determinar la URL base. Si viene de Render (property: host), puede venir sin protocolo.
 const getBaseUrl = () => {
     let url = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+
+    // 1. Asegurar protocolo HTTPS si falta (Render da solo el host)
     if (!url.startsWith('http')) {
         url = `https://${url}`;
     }
+
+    // 2. Asegurar sufijo /api (Render no lo incluye automáticamente)
+    if (!url.endsWith('/api')) {
+        url = `${url}/api`;
+        // Evitar doble slash //api si el usuario puso / al final
+        url = url.replace('//api', '/api');
+    }
+
     return url;
 };
 
