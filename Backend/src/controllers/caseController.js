@@ -354,13 +354,36 @@ const updateCase = async (req, res) => {
 
 // 12. ELIMINAR UN CASO
 const deleteCase = async (req, res) => {
-    const { id } = req.params;
-    const { uid: userId, rol: userRole } = req.user;
+    try {
+        const { id } = req.params;
+        const { uid: userId, rol: userRole } = req.user;
 
-    // 2. Verificar permisos del usuario
-    const isMedicoGeneral = caseData.medicoGeneralId === userId;
-    const isMedicoEspecialista = caseData.medicoEspecialistaId === userId;
-    const isAdmin = userRole === 'administrador';
+        const casoRef = db.collection('casos').doc(id);
+
+        // 1. Obtener datos del caso ANTES de verificar permisos
+        const caseDoc = await casoRef.get();
+        if (!caseDoc.exists) {
+            return res.status(404).json({ message: 'Caso no encontrado.' });
+        }
+        const caseData = caseDoc.data();
+
+        // 2. Verificar permisos del usuario
+        const isMedicoGeneral = caseData.medicoGeneralId === userId;
+        const isMedicoEspecialista = caseData.medicoEspecialistaId === userId;
+        const isAdmin = userRole === 'administrador';
+
+        if (!isMedicoGeneral && !isMedicoEspecialista && !isAdmin) {
+            return res.status(403).json({ message: 'No tienes permiso para eliminar este caso.' });
+        }
+
+        // 3. Eliminar (Opcional: borrar subcolección de comentarios si fuera necesario, pero Firestore no lo exige estricto)
+        await casoRef.delete();
+
+        res.status(200).json({ message: 'Caso eliminado con éxito.' });
+    } catch (error) {
+        console.error('Error al eliminar caso:', error);
+        res.status(500).json({ message: 'Error en el servidor al eliminar el caso.' });
+    }
 };
 
 
