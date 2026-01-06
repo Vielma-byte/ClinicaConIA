@@ -98,8 +98,16 @@ const DicomViewer = () => {
         // --- RESIZE OBSERVER PARA RESPONSIVIDAD ---
         const resizeObserver = new ResizeObserver(() => {
             if (element) {
-                cornerstone.resize(element);
-                cornerstone.fitToWindow(element);
+                try {
+                    // Verificar si el elemento está habilitado y tiene imagen antes de redimensionar
+                    const enabledElement = cornerstone.getEnabledElement(element);
+                    if (enabledElement && enabledElement.image) {
+                        cornerstone.resize(element);
+                        cornerstone.fitToWindow(element);
+                    }
+                } catch (e) {
+                    console.log('Ignorando resize - elemento no listo:', e);
+                }
             }
         });
         resizeObserver.observe(element);

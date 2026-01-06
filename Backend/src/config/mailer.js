@@ -9,7 +9,9 @@ const transporter = nodemailer.createTransport({
         clientId: process.env.OAUTH_CLIENTID,
         clientSecret: process.env.OAUTH_CLIENT_SECRET,
         refreshToken: process.env.OAUTH_REFRESH_TOKEN
-    }
+    },
+    debug: true, // Show debug output
+    logger: true // Log information to console
 });
 
 module.exports = transporter;
