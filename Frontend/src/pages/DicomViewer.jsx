@@ -6,7 +6,7 @@ import * as cornerstoneMath from 'cornerstone-math';
 import * as cornerstoneTools from 'cornerstone-tools';
 import * as dicomParser from 'dicom-parser';
 import Hammer from 'hammerjs';
-import axios from 'axios'; // Importamos axios
+import api from '../api/axiosConfig'; // Usar instancia configurada
 
 // Configurar cornerstone
 cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
@@ -31,7 +31,7 @@ cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
 // Inicializar cornerstone tools
 cornerstoneTools.init();
 
-const API_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+
 
 const DicomViewer = () => {
     const navigate = useNavigate();
@@ -150,7 +150,7 @@ const DicomViewer = () => {
 
     const fetchPaciente = async (nss) => {
         try {
-            const response = await axios.get(`${API_URL}/pacientes/${nss}`);
+            const response = await api.get(`/pacientes/${nss}`);
             setPaciente(response.data);
         } catch (err) {
             setError(`No se pudo cargar la información del paciente con NSS: ${nss}`);
